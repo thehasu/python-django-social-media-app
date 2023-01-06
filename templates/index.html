@@ -172,6 +172,12 @@
                         <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
                             <ul>
                                 <li><a href="/settings"> Account setting </a> </li>
+                                <li><a href="{% url 'core:update_profile' pk=user.id %}"> Account setting </a> </li>
+                                {% if user is None  %}
+                                <li><a href="/signup"> Signup </a> </li>
+                                {% else %}
+                                {% endif %}
+
                                 <li><a href="{% url 'core:logout' %}"> Log Out</a></li>
                             </ul>
                         </div>

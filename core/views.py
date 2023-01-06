@@ -2,15 +2,19 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, auth
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import Profile
+from core.forms import ProfileForm
+
+from .models import City, Profile
 
 # Create your views here.
 
 @login_required(login_url='/signin')
 def index(request):
-    return render(request, 'index.html')
+    current_user = Profile.objects.get(user=request.user)
+    print(current_user)
+    return render(request, 'index.html', {'user':current_user})
 
 @login_required(login_url='/signin')
 def settings(request):
@@ -103,3 +107,24 @@ def signin(request):
 def logout(request):
     auth.logout(request)
     return redirect('/signin')
+
+
+
+#======== EXTRA CODE FOR PRACTICE ========#
+def person_update_view(request, pk):
+    person = get_object_or_404(Profile, pk=pk)
+    form = ProfileForm(instance=person)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=person)
+        if form.is_valid():
+            form.save()
+            messages.info(request, 'Profile updated successfully')
+            return redirect('core:update_profile', pk=pk)
+    return render(request, 'update_profile.html', {'form': form})
+
+# AJAX
+def load_cities(request):
+    country_id = request.GET.get('country_id')
+    cities = City.objects.filter(country_id=country_id).all()
+    return render(request, 'city_dropdown_list_options.html', {'cities': cities})
+    # return JsonResponse(list(cities.values('id', 'name')), safe=False)

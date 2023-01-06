@@ -11,4 +11,7 @@ urlpatterns = [
     path('signup', views.signup, name="signup"),
     path('signin', views.signin, name="signin"),
     path('logout', views.logout, name="logout"),
+
+    path('user/<int:pk>/', views.person_update_view, name='update_profile'),
+    path('ajax/load-cities/', views.load_cities, name='ajax_load_cities'), # AJAX
 ]
